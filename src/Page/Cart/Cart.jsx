@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import toast from "react-hot-toast";

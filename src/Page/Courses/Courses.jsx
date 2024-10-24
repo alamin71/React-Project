@@ -4,7 +4,7 @@ import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import axios from "axios";
 
 const Courses = () => {
-  const { cart, setCart, addToCart } = useContext(OrderContext); // Using addToCart from OrderContext
+  const { cart, addToCart } = useContext(OrderContext);
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -14,7 +14,6 @@ const Courses = () => {
           "https://itder.com/api/get-course-list"
         );
         const data = response.data;
-        console.log(data);
         setCourses(data.courseData); // Fetch and set courses data
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -24,16 +23,10 @@ const Courses = () => {
   }, []);
 
   const handleAddToCart = (course) => {
-    console.log("Course trying to add:", course); // Debugging log
-    console.log("Current cart:", cart); // Debugging log
-
-    if (cart && cart.length > 0) {
-      // Replace the old course with the new one
-      setCart([course]); // Set cart with the new course only
-      toast.success("Old course replaced with new one!");
+    if (cart.length > 0 && cart[0].id !== course.id) {
+      toast.error("You can only add one course to the cart!");
     } else {
-      addToCart(course); // Add to cart if it's empty
-      toast.success("Course added to cart!");
+      addToCart(course);
     }
   };
 
@@ -92,12 +85,36 @@ const Courses = () => {
                 </div>
               </div>
               <div className="mt-4 flex gap-2">
-                <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full font-bold text-md"
-                  onClick={() => handleAddToCart(course)} // Add to Cart Button Handler
-                >
-                  Add To Cart
-                </button>
+                {cart.length > 0 && cart[0].id === course.id ? (
+                  <div className="flex items-center w-full justify-between">
+                    {/* <button
+                      className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
+                      onClick={() => addToCart(course)}
+                    >
+                      -
+                    </button> */}
+                    {/* <span>{cart[0].quantity}</span>
+                    <button
+                      className="bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600"
+                      onClick={() => addToCart(course)}
+                    >
+                      +
+                    </button> */}
+                    <button
+                      className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
+                      onClick={() => addToCart({ ...course, remove: true })}
+                    >
+                      Remove from cart
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full font-bold text-md"
+                    onClick={() => handleAddToCart(course)}
+                  >
+                    Add To Cart
+                  </button>
+                )}
               </div>
             </div>
           </div>
