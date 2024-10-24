@@ -23,12 +23,18 @@ const Courses = () => {
   }, []);
 
   const handleAddToCart = (course) => {
+    console.log("Cart State:", cart);
     if (cart.length > 0 && cart[0].id !== course.id) {
+      console.log("Attempt to add different course");
       toast.error("You can only add one course to the cart!");
     } else {
       addToCart(course);
+      toast.success("Course added to cart!");
     }
   };
+  useEffect(() => {
+    console.log("Cart Updated:", cart);
+  }, [cart]);
 
   return (
     <div className="m-mt_16px">

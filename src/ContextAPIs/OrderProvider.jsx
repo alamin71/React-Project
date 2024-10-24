@@ -1,5 +1,6 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 export const OrderContext = createContext(null);
 
@@ -64,6 +65,7 @@ const OrderProvider = ({ children }) => {
       }}
     >
       {children}
+      <Toaster />
     </OrderContext.Provider>
   );
 };
