@@ -14,7 +14,7 @@ const Courses = () => {
           "https://itder.com/api/get-course-list"
         );
         const data = response.data;
-        setCourses(data.courseData); // Fetch and set courses data
+        setCourses(data.courseData);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }

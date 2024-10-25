@@ -16,11 +16,13 @@ const OrderProvider = ({ children }) => {
       return;
     }
 
+    // not allow  double select
     if (cart.length > 0 && cart[0].id !== course.id) {
       toast.error("You can only add one course to the cart!");
       return;
     }
 
+    //cart update
     setCart((prevCart) => {
       if (prevCart.length > 0 && prevCart[0].id === course.id) {
         const updatedCourse = {
@@ -34,15 +36,19 @@ const OrderProvider = ({ children }) => {
     });
   };
 
+  // remove item from local storage
   const removeFromCart = () => {
     setCart([]);
+    localStorage.removeItem("CourseDraft");
   };
 
+  // load data from local storage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("CourseDraft")) || [];
     setCart(storedCart);
   }, []);
 
+  // cart data set to local storage
   useEffect(() => {
     if (!isInitialMount.current) {
       localStorage.setItem("CourseDraft", JSON.stringify(cart));
@@ -59,7 +65,6 @@ const OrderProvider = ({ children }) => {
         open,
         setOpen,
         cart,
-        setCart,
         addToCart,
         removeFromCart,
       }}

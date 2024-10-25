@@ -22,9 +22,9 @@ const Cart = () => {
 
   const handleQuantityChange = (type) => {
     if (type === "increase") {
-      setQuantity((prevQuantity) => prevQuantity + 1);
+      setQuantity((prevQuantity) => prevQuantity + 1); // Increase quantity
     } else if (type === "decrease" && quantity > 1) {
-      setQuantity((prevQuantity) => prevQuantity - 1);
+      setQuantity((prevQuantity) => prevQuantity - 1); // Decrease quantity, but not below 1
     }
   };
 
@@ -115,14 +115,14 @@ const Cart = () => {
             <div className="p-3 bg-white w-full h-full">
               <h3 className="font-bold text-[16px]">Total</h3>
               <div className="flex justify-between">
-                <span className="pb-4">Subtotal:</span>
+                <span className="pb-3">Total Price :</span>
                 <span>Tk {course.discount_price * quantity}</span>
               </div>
               <Link
                 to="/checkout"
                 className="mt-4 w-full bg-blue-500 text-white text-center py-2 px-4 rounded hover:bg-blue-600 font-bold"
               >
-                Proceed to Checkout
+                PROCCED TO CHECKOUT
               </Link>
             </div>
           </div>
