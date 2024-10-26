@@ -1,20 +1,93 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
-// import { Link } from "react-router-dom";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Checkout = () => {
-  const { cart } = useContext(OrderContext);
-  console.log("Cart Items in Checkout Page:", cart);
+  const { cart, setCart } = useContext(OrderContext);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    formNo: "",
+    parentName: "",
+    parentNumber: "",
+    school: "",
+    jobInfo: "",
+    email: "",
+    gender: "",
+    presentAddress: "",
+    permanentAddress: "",
+    nid: "",
+    mobile: "",
+    guardianName: "",
+    dob: "",
+    bloodGroup: "",
+    photo: null,
+  });
 
-  //Function to handleSubmitOrder
-  const handleSubmitOrder = () => {
-    console.log("handleSubmitOrder is click");
+  useEffect(() => {
+    // Load cart from localStorage on component mount
+    const storedCart = JSON.parse(localStorage.getItem("cart"));
+    if (storedCart) {
+      setCart(storedCart);
+    }
+  }, [setCart]);
+
+  const handleChange = (e) => {
+    const { id, value, files } = e.target;
+    if (id === "photo") {
+      setFormData({ ...formData, photo: files[0] });
+    } else {
+      setFormData({ ...formData, [id]: value });
+    }
   };
-  // Function to calculate total price
+
+  // const handleSubmitOrder = async (e) => {
+  //   e.preventDefault();
+  //   const orderData = {
+  //     ...formData,
+  //     cartItems: cart,
+  //     totalAmount: calculateTotalPrice(),
+  //   };
+
+  //   try {
+  //     const response = await axios.post(
+  //       "https://itder.com/order-list",
+  //       orderData
+  //     );
+  //     // Clear cart and localStorage
+  //     setCart([]); // Clear cart context
+  //     localStorage.removeItem("cart");
+  //     console.log("Order submitted successfully: ", response.data);
+  //     alert("Order submitted successfully!");
+  //   } catch (error) {
+  //     console.error("Error submitting order: ", error);
+  //     alert("Failed to submit order. Please try again.");
+  //   }
+  // };
+  const handleSubmitOrder = (e) => {
+    e.preventDefault();
+
+    // Order details
+    const orderData = {
+      ...formData,
+      cartItems: cart,
+      totalAmount: calculateTotalPrice(),
+    };
+
+    // Log order details to console
+    console.log("Order Submitted:", orderData);
+
+    // Clear cart and localStorage
+    setCart([]); // Clear cart context
+    localStorage.removeItem("cart"); // Remove cart from localStorage
+
+    toast.success("Order submitted successfully!");
+  };
+
   const calculateTotalPrice = () => {
     return cart.reduce(
-      (total, item) => total + item.discountPrice * item.quantity,
+      (total, item) => total + item.discount_price * item.quantity,
       0
     );
   };
@@ -42,6 +115,8 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -55,11 +130,13 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="formNo"
+                  value={formData.formNo}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
+            {/* Other form fields here */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -71,6 +148,8 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="parentName"
+                  value={formData.parentName}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -84,11 +163,13 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="parentNumber"
+                  value={formData.parentNumber}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
+            {/* Continue adding other fields in the same manner */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -100,6 +181,8 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="school"
+                  value={formData.school}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -113,11 +196,12 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="jobInfo"
+                  value={formData.jobInfo}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -129,6 +213,8 @@ const Checkout = () => {
                 <input
                   type="email"
                   id="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -141,9 +227,11 @@ const Checkout = () => {
                 </label>
                 <select
                   id="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select Gender
                   </option>
                   <option value="Female">Female</option>
@@ -152,7 +240,6 @@ const Checkout = () => {
                 </select>
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -163,6 +250,8 @@ const Checkout = () => {
                 </label>
                 <textarea
                   id="presentAddress"
+                  value={formData.presentAddress}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -175,11 +264,12 @@ const Checkout = () => {
                 </label>
                 <textarea
                   id="permanentAddress"
+                  value={formData.permanentAddress}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -191,6 +281,8 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="nid"
+                  value={formData.nid}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -204,11 +296,12 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -220,6 +313,8 @@ const Checkout = () => {
                 <input
                   type="text"
                   id="guardianName"
+                  value={formData.guardianName}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
@@ -233,11 +328,12 @@ const Checkout = () => {
                 <input
                   type="date"
                   id="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 />
               </div>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
                 <label
@@ -248,9 +344,11 @@ const Checkout = () => {
                 </label>
                 <select
                   id="bloodGroup"
+                  value={formData.bloodGroup}
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
                 >
-                  <option value="" disabled selected>
+                  <option value="" disabled>
                     Select Blood Group
                   </option>
                   <option value="A+">A+</option>
@@ -268,26 +366,20 @@ const Checkout = () => {
                   htmlFor="photo"
                   className="block font-semibold text-base mb-2"
                 >
-                  Student Photo:
+                  Photo:
                 </label>
                 <input
                   type="file"
                   id="photo"
-                  accept="image/*"
+                  onChange={handleChange}
                   className="w-full border border-gray-300 rounded-md p-2"
-                  onChange={(e) => {
-                    // Handle the file upload here
-                    const file = e.target.files[0];
-                    if (file) {
-                      console.log("Uploaded file:", file);
-                    }
-                  }}
                 />
               </div>
             </div>
           </div>
-
+          {/* Cart Section */}
           <div className="m-mt_16px">
+            <h3 className="text-lg font-bold pb-3">Order Summary</h3>
             <div className="pt-p_16px">
               <div className="lg:flex items-start gap-3">
                 <div className="w-full lg:w-[58%] bg-white border-2">
@@ -309,6 +401,7 @@ const Checkout = () => {
                       </tr>
                     </thead>
 
+                    {/* cart part */}
                     <tbody className="overflow-x-auto">
                       {cart.map((item) => (
                         <tr
@@ -324,12 +417,12 @@ const Checkout = () => {
                                 <div className="mask">
                                   <img
                                     className="h-[40px] w-[70px]"
-                                    src={item.image}
+                                    src={item.photo}
                                     alt="Course"
                                   />
                                 </div>
                                 <p className="text-[14.4px] px-[7px] text-center flex">
-                                  {item.name}{" "}
+                                  {item.course_name}{" "}
                                   <span className="hidden lg:flex">
                                     {" "}
                                     - {item.unit}
@@ -340,7 +433,7 @@ const Checkout = () => {
                           </td>
                           <td>
                             <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                              {item.discountPrice}
+                              {item.discount_price}
                             </p>
                           </td>
                           <td>
@@ -367,7 +460,7 @@ const Checkout = () => {
                           </td>
                           <td>
                             <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                              {item.discountPrice * item.quantity}
+                              {item.discount_price * item.quantity}
                             </p>
                           </td>
                         </tr>
@@ -385,8 +478,8 @@ const Checkout = () => {
 
                 <div className="w-full lg:w-[42%] bg-white border-2 px-4">
                   <div className="p-4">
-                    <h3 className="text-lg font-bold">Order Summary</h3>
-                    <div className="flex justify-between py-2 border-b border-gray-300">
+                    {/* <h3 className="text-lg font-bold">Order Summary</h3> */}
+                    <div className="flex justify-between py-1 border-b border-gray-300">
                       <p className="text-black font-bold">Total Price</p>
                       <p className="text-black font-bold">
                         {calculateTotalPrice()}

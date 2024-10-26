@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import toast from "react-hot-toast";
@@ -6,27 +6,41 @@ import { Link } from "react-router-dom";
 
 const Cart = () => {
   const { cart, setCart } = useContext(OrderContext);
-  const [quantity, setQuantity] = useState(1); // Manage quantity locally
+
+  // Load cart from localStorage on initial render
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart"));
+    if (storedCart) {
+      setCart(storedCart);
+    }
+  }, [setCart]);
+
+  const handleRemove = (courseId) => {
+    const updatedCart = cart.filter((course) => course.id !== courseId);
+    setCart(updatedCart); // Update the cart
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
+    toast.success("Course removed from cart!");
+  };
+
+  const handleQuantityChange = (courseId, type) => {
+    const updatedCart = cart.map((course) => {
+      if (course.id === courseId) {
+        if (type === "increase") {
+          return { ...course, quantity: (course.quantity || 1) + 1 };
+        } else if (type === "decrease" && (course.quantity || 1) > 1) {
+          return { ...course, quantity: (course.quantity || 1) - 1 };
+        }
+      }
+      return course;
+    });
+
+    setCart(updatedCart); // Update the cart
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
+  };
 
   if (!cart || cart.length === 0) {
     return <div>No courses in the cart.</div>;
   }
-
-  const course = cart[0]; // Single course logic
-
-  const handleRemove = () => {
-    setCart([]); // Clear cart
-    localStorage.removeItem("cart"); // Remove from localStorage
-    toast.success("Course removed from cart!");
-  };
-
-  const handleQuantityChange = (type) => {
-    if (type === "increase") {
-      setQuantity((prevQuantity) => prevQuantity + 1);
-    } else if (type === "decrease" && quantity > 1) {
-      setQuantity((prevQuantity) => prevQuantity - 1);
-    }
-  };
 
   return (
     <div className="m-mt_16px">
@@ -54,60 +68,66 @@ const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-300">
-                  <td>
-                    <div className="flex items-center justify-center">
-                      <div className="w-[20%] text-center">
-                        <RiDeleteBin5Line
-                          className="text-xl hover:text-footer_color cursor-pointer"
-                          onClick={handleRemove}
-                        />
+                {cart.map((course) => (
+                  <tr key={course.id} className="border-b border-gray-300">
+                    <td>
+                      <div className="flex items-center justify-center">
+                        <div className="w-[20%] text-center">
+                          <RiDeleteBin5Line
+                            className="text-xl hover:text-footer_color cursor-pointer"
+                            onClick={() => handleRemove(course.id)}
+                          />
+                        </div>
+                        <div className="flex flex-col text-center items-center py-2 w-[80%]">
+                          <img
+                            className="h-[40px] w-[70px]"
+                            src={course.photo}
+                            alt="Course"
+                          />
+                          <p className="text-[14.4px] px-[7px]">
+                            {course.course_name}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex flex-col text-center items-center py-2 w-[80%]">
-                        <img
-                          className="h-[40px] w-[70px]"
-                          src={course.photo}
-                          alt="Course"
+                    </td>
+                    <td>
+                      <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
+                        Tk {course.discount_price}
+                      </p>
+                    </td>
+                    <td>
+                      <div className="flex justify-center">
+                        <button
+                          className="px-4 w-[30px] font-bold"
+                          onClick={() =>
+                            handleQuantityChange(course.id, "decrease")
+                          }
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          className="font-bold w-[30px] lg:w-[60px] text-center border border-gray-300 p-[7px]"
+                          value={course.quantity || 1} // Use quantity from course
+                          readOnly
                         />
-                        <p className="text-[14.4px] px-[7px]">
-                          {course.course_name}
-                        </p>
+                        <button
+                          className="px-4 w-[30px] font-bold"
+                          onClick={() =>
+                            handleQuantityChange(course.id, "increase")
+                          }
+                        >
+                          +
+                        </button>
                       </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                      Tk {course.discount_price}
-                    </p>
-                  </td>
-                  <td>
-                    <div className="flex justify-center">
-                      <button
-                        className="px-4 w-[30px] font-bold"
-                        onClick={() => handleQuantityChange("decrease")}
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        className="font-bold w-[30px] lg:w-[60px] text-center border border-gray-300 p-[7px]"
-                        value={quantity}
-                        readOnly
-                      />
-                      <button
-                        className="px-4 w-[30px] font-bold"
-                        onClick={() => handleQuantityChange("increase")}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
-                      Tk {course.discount_price * quantity}
-                    </p>
-                  </td>
-                </tr>
+                    </td>
+                    <td>
+                      <p className="text-[14.4px] font-bold p-[7px] text-black text-center">
+                        Tk {course.discount_price * (course.quantity || 1)}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -116,7 +136,14 @@ const Cart = () => {
               <h3 className="font-bold text-[16px]">Total</h3>
               <div className="flex justify-between">
                 <span className="pb-4">Subtotal:</span>
-                <span>Tk {course.discount_price * quantity}</span>
+                <span>
+                  Tk{" "}
+                  {cart.reduce(
+                    (total, course) =>
+                      total + course.discount_price * (course.quantity || 1),
+                    0
+                  )}
+                </span>
               </div>
               <Link
                 to="/checkout"

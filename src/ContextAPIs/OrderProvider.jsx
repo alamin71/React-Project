@@ -8,7 +8,7 @@ const OrderProvider = ({ children }) => {
   const [examID, setExamID] = useState(null);
   const [open, setOpen] = useState(true);
   const [cart, setCart] = useState([]);
-  const isInitialMount = useRef(true);
+  // const isInitialMount = useRef(true);
 
   const addToCart = (course) => {
     if (course.remove) {
@@ -16,22 +16,24 @@ const OrderProvider = ({ children }) => {
       return;
     }
 
-    // not allow  double select
+    // Not allow double select
     if (cart.length > 0 && cart[0].id !== course.id) {
       toast.error("You can only add one course to the cart!");
       return;
     }
 
-    //cart update
     setCart((prevCart) => {
       if (prevCart.length > 0 && prevCart[0].id === course.id) {
+        const updatedQuantity = prevCart[0].quantity + 1; // Update quantity
+        const updatedPrice = course.price * updatedQuantity; // Update price based on quantity
         const updatedCourse = {
           ...course,
-          quantity: prevCart[0].quantity + 1,
+          quantity: updatedQuantity,
+          price: updatedPrice,
         };
         return [updatedCourse];
       } else {
-        return [{ ...course, quantity: 1 }];
+        return [{ ...course, quantity: 1, price: course.price }];
       }
     });
   };
@@ -42,19 +44,17 @@ const OrderProvider = ({ children }) => {
     localStorage.removeItem("CourseDraft");
   };
 
-  // load data from local storage
+  // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("CourseDraft")) || [];
-    setCart(storedCart);
+    const storedCart = JSON.parse(localStorage.getItem("cart"));
+    if (storedCart) {
+      setCart(storedCart);
+    }
   }, []);
 
-  // cart data set to local storage
+  // Update localStorage whenever the cart changes
   useEffect(() => {
-    if (!isInitialMount.current) {
-      localStorage.setItem("CourseDraft", JSON.stringify(cart));
-    } else {
-      isInitialMount.current = false;
-    }
+    localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   return (
@@ -65,6 +65,7 @@ const OrderProvider = ({ children }) => {
         open,
         setOpen,
         cart,
+        setCart,
         addToCart,
         removeFromCart,
       }}
