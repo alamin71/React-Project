@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import toast from "react-hot-toast";
-import axios from "axios";
+// import axios from "axios";
 
 const Checkout = () => {
   const { cart, setCart } = useContext(OrderContext);
@@ -74,13 +74,11 @@ const Checkout = () => {
       cartItems: cart,
       totalAmount: calculateTotalPrice(),
     };
-
-    // Log order details to console
     console.log("Order Submitted:", orderData);
 
     // Clear cart and localStorage
-    setCart([]); // Clear cart context
-    localStorage.removeItem("cart"); // Remove cart from localStorage
+    setCart([]);
+    localStorage.removeItem("cart");
 
     toast.success("Order submitted successfully!");
   };

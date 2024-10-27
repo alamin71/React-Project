@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import toast from "react-hot-toast";
@@ -17,7 +17,7 @@ const Cart = () => {
 
   const handleRemove = (courseId) => {
     const updatedCart = cart.filter((course) => course.id !== courseId);
-    setCart(updatedCart); // Update the cart
+    setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
     toast.success("Course removed from cart!");
   };
