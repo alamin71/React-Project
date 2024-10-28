@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { OrderContext } from "../../ContextAPIs/OrderProvider";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 // import axios from "axios";
 
 const Checkout = () => {
@@ -24,6 +25,7 @@ const Checkout = () => {
     bloodGroup: "",
     photo: null,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Load cart from localStorage on component mount
@@ -76,11 +78,14 @@ const Checkout = () => {
     };
     console.log("Order Submitted:", orderData);
 
+    // Save order details to local storage
+    localStorage.setItem("orderData", JSON.stringify(orderData));
+
     // Clear cart and localStorage
     setCart([]);
     localStorage.removeItem("cart");
-
     toast.success("Order submitted successfully!");
+    navigate("/order-details");
   };
 
   const calculateTotalPrice = () => {
@@ -501,5 +506,4 @@ const Checkout = () => {
     </>
   );
 };
-
 export default Checkout;

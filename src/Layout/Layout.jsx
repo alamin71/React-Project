@@ -5,7 +5,6 @@ import { useContext } from "react";
 import { OrderContext } from "../ContextAPIs/OrderProvider";
 import useSmallScreen from "../Hooks/useSmallScreen";
 import Copyright from "../Shared/Footer/Copyright";
-import Courses from "../Page/Courses/Courses";
 
 const Layout = () => {
   const { open, sidebarRef } = useContext(OrderContext);
@@ -31,7 +30,6 @@ const Layout = () => {
             <div className="overflow-y-auto h-[calc(100vh-52px)]">
               <div className="min-h-[calc(100vh-140px)]">
                 <Outlet />
-                <Courses />
               </div>
               <Copyright />
             </div>

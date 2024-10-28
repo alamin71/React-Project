@@ -18,8 +18,8 @@ const Cart = () => {
   const handleRemove = (courseId) => {
     const updatedCart = cart.filter((course) => course.id !== courseId);
     setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
     toast.success("Course removed from cart!");
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // Update localStorage
   };
 
   const handleQuantityChange = (courseId, type) => {
