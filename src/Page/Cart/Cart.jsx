@@ -135,7 +135,7 @@ const Cart = () => {
             <div className="p-3 bg-white w-full h-full">
               <h3 className="font-bold text-[16px]">Total</h3>
               <div className="flex justify-between">
-                <span className="pb-4">Subtotal:</span>
+                <span className="py-3">Subtotal:</span>
                 <span>
                   Tk{" "}
                   {cart.reduce(

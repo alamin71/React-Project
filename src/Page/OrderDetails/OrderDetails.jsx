@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const OrderDetails = () => {
+const OrderDetails = ({ orderId }) => {
   const [orderDetails, setOrderDetails] = useState(null);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const OrderDetails = () => {
       console.error("Error parsing order data from local storage:", error);
       setOrderDetails(null);
     }
-  }, []);
+  }, [orderId]);
 
   if (!orderDetails) {
     return <div>No order details available.</div>;
@@ -37,9 +37,7 @@ const OrderDetails = () => {
             </div>
             <div className="w-full border flex flex-col md:flex-row md:items-start md:mt-4 mt-3 bg-[#D2C5A2] rounded-md p-4">
               <div className="md:text-base text-sm flex-1 font-semibold md:border-r-2 md:border-black md:pr-10">
-                <p className="font-bold md:mb-4 w-full">
-                  Demo information, Checkout page information will be here
-                </p>
+                <p className="font-bold md:mb-4 w-full"></p>
                 <div className="space-y-1 w-full">
                   <div className="flex items-center justify-between">
                     <p>Full Name:</p>
@@ -83,9 +81,7 @@ const OrderDetails = () => {
               </div>
 
               <div className="md:text-base text-sm flex-1 font-semibold md:ml-10 mt-m_medium">
-                <p className="font-bold md:mb-4 w-full">
-                  Demo information, Checkout page information will be here
-                </p>
+                <p className="font-bold md:mb-4 w-full"></p>
                 <div className="space-y-1 w-full">
                   <div className="flex items-center justify-between">
                     <p>Form No:</p>
@@ -124,7 +120,7 @@ const OrderDetails = () => {
                     <p>
                       {typeof orderDetails.photo === "string" ? (
                         <img
-                          className="h-[40px] w-[70px] object-cover mx-auto"
+                          className="h-[60px] w-[60px] object-cover mx-auto"
                           src={orderDetails.photo}
                           alt="User"
                         />

@@ -38,10 +38,20 @@ const Checkout = () => {
   const handleChange = (e) => {
     const { id, value, files } = e.target;
     if (id === "photo") {
-      setFormData({ ...formData, photo: files[0] });
+      if (files[0]) {
+        setFormData({
+          ...formData,
+          photo: URL.createObjectURL(files[0]),
+        });
+      }
     } else {
       setFormData({ ...formData, [id]: value });
     }
+  };
+
+  //order id generate func
+  const generateOrderId = () => {
+    return Math.floor(Math.random() * 1000000);
   };
 
   // const handleSubmitOrder = async (e) => {
@@ -54,7 +64,7 @@ const Checkout = () => {
 
   //   try {
   //     const response = await axios.post(
-  //       "https://itder.com/order-list",
+  //       "https://itder.com/api/course-purchase",
   //       orderData
   //     );
   //     // Clear cart and localStorage
@@ -69,10 +79,12 @@ const Checkout = () => {
   // };
   const handleSubmitOrder = (e) => {
     e.preventDefault();
+    const orderId = generateOrderId();
 
     // Order details
     const orderData = {
       ...formData,
+      orderId,
       cartItems: cart,
       totalAmount: calculateTotalPrice(),
     };
@@ -442,9 +454,9 @@ const Checkout = () => {
                           <td>
                             <div className="flex justify-center">
                               <div className="border">
-                                <button className="px-4 w-[30px] font-bold font_standard my-1.5">
+                                {/* <button className="px-4 w-[30px] font-bold font_standard my-1.5">
                                   -
-                                </button>
+                                </button> */}
                               </div>
                               <div className="border-y">
                                 <input
@@ -455,9 +467,9 @@ const Checkout = () => {
                                 />
                               </div>
                               <div className="border">
-                                <button className="px-4 w-[30px] font-bold font_standard my-1.5">
+                                {/* <button className="px-4 w-[30px] font-bold font_standard my-1.5">
                                   +
-                                </button>
+                                </button> */}
                               </div>
                             </div>
                           </td>
